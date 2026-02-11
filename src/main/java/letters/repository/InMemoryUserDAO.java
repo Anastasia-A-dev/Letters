@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 @Repository
 public class InMemoryUserDAO {
@@ -12,8 +13,9 @@ public class InMemoryUserDAO {
     public List<User> findAllUsers() {
         return USERS;
     }
-    public void saveUser(User user) {
+    public Optional<User> saveUser(User user) {
         USERS.add(user);
+        return Optional.ofNullable(user);
     }
     public User findUserByLogin(String login) {
         return USERS.stream()
