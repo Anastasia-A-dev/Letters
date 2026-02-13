@@ -6,15 +6,13 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-app:
-  secret:  "fgjhsdkgfhjjskdlfksfkgls"
+jwt:
+  secret:  "fgjhsdkflsdlfsjklewlrtwwerwk48902793874592759872395729759irkfhkjdhfkhsd38759827598dfhdkfhidhgls"
   lifetime: 60000
-
-    

@@ -4,10 +4,12 @@ import letters.models.Letter;
 import letters.repository.LetterRepository;
 import letters.services.LetterService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 @AllArgsConstructor
 public class LetterServiceImpl implements LetterService {
     private final LetterRepository repository;

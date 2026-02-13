@@ -1,15 +1,12 @@
 package letters.services.impl;
 
-import io.jsonwebtoken.security.Jwks;
-import letters.dto.AuthRequest;
-import letters.dto.RegisterRequest;
 import letters.models.User;
 import letters.repository.UserRepository;
 import letters.services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +17,6 @@ import java.util.Optional;
 @Primary
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Override
     public List<User> findAllUsers() {
         return repository.findAll();
@@ -44,29 +40,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User register(RegisterRequest request){
-        if (findUserByLogin(request.getLogin()) == null){
-            throw new RuntimeException("Login already exists");
-        }
-        User user = new User();
-        user.setLogin(request.getLogin());
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        return repository.save(user);
-    }
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = repository.findByLogin(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
-    @Override
-    public User login(AuthRequest request) {
-        Optional<User> userOpt = repository.findByLogin(request.getLogin());
-        if (userOpt.isEmpty()){
-            throw new RuntimeException("Invalid login");
-        }
-        User user = userOpt.get();
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())){
-            throw new RuntimeException("Invalid login password");
-        }
-        return user;
+        return org.springframework.security.core.userdetails.User
+                .builder()
+                .username(user.getLogin())
+                .password(user.getPassword())
+                .authorities("ROLE_USER")
+                .build();
     }
 
 }
